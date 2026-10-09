@@ -9,16 +9,16 @@ const Banner = () => {
     <div className="bg-[#F0F5F0]">
       <div className="mx-auto max-w-6xl px-4 py-6">
         {/* Main Card Container */}
-        <div className="rounded-3xl border border-gray-200 bg-white p-8 md:p-12 shadow-sm flex flex-col md:flex-row items-center justify-between gap-8">
+        <div className="rounded-3xl border border-gray-200 bg-white p-6 md:p-12 shadow-sm flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
           {/* Left Text Section */}
-          <div className="flex flex-col items-start text-left max-w-lg space-y-4">
+          <div className="flex flex-col items-center md:items-start max-w-lg space-y-4">
             {/* Date Badge */}
             <span className="inline-block bg-[#E1F0E7] text-[#05893E] text-xs font-medium px-3 py-1 rounded-full">
               {date}
             </span>
 
             {/* Heading */}
-            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900 leading-tight">
+            <h1 className="text-2xl md:text-4xl font-extrabold tracking-tight text-gray-900 leading-tight">
               আজকের বাজারের দাম এক নজরে
             </h1>
 
@@ -37,13 +37,15 @@ const Banner = () => {
           </div>
 
           {/* Right Image Section */}
-          <div className="flex justify-center shrink-0">
+          <div className="flex justify-center shrink-0 w-full md:w-auto">
             <Image
-              className="object-contain w-64 md:w-80 h-auto"
+              className="object-contain w-56 md:w-80 h-auto"
               priority
-              height={320}
-              width={320}
-              src={"/bazar-hero.png"}
+              quality={100}
+              width={960}
+              height={960}
+              sizes="(min-width: 768px) 320px, 224px"
+              src="/bazar-hero.png"
               alt="Bazar Hero Banner"
             />
           </div>

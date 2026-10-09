@@ -27,6 +27,14 @@ type Product = {
 
 const toBn = (n: number) => n.toLocaleString("bn-BD");
 
+const getBanglaUnit = (unit: string) => {
+  if (unit === "kg") return "কেজি";
+  if (unit === "litre") return "লিটার";
+  if (unit === "piece") return "পিস";
+  if (unit === "dozen") return "ডজন";
+  return unit;
+};
+
 export default function Marquee() {
   const [products, setProducts] = useState<Product[]>([]);
 
@@ -54,7 +62,7 @@ export default function Marquee() {
   if (products.length === 0) return null;
 
   return (
-    <div className="w-full overflow-hidden border-b border-gray-200 bg-white py-2">
+    <div className="w-full overflow-hidden bg-white border-y border-gray-200 py-3">
       <MarqueeText duration={10} direction="right" pauseOnHover>
         {products.map((p) => {
           const isUp = p.change?.dir === "up";
@@ -71,9 +79,8 @@ export default function Marquee() {
           return (
             <span
               key={p.id}
-              className="mx-4 inline-flex items-center gap-2 whitespace-nowrap text-sm font-medium text-gray-800 bg-gray-50 border border-gray-200 px-3 py-1 rounded-md shadow-sm"
+              className="mx-6 inline-flex items-center gap-1 whitespace-nowrap text-sm font-medium text-gray-800"
             >
-              {/* Uses the emoji from the API image field */}
               <span className="text-base">
                 {p.image || p.categoryIcon || "📦"}
               </span>
@@ -81,7 +88,7 @@ export default function Marquee() {
               <span>{p.nameBn}</span>
 
               <span className="text-gray-600 font-semibold">
-                {toBn(p.today)} টাকা/{p.unit}
+                {toBn(p.today)} টাকা/{getBanglaUnit(p.unit)}
               </span>
 
               <span

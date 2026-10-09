@@ -1,5 +1,3 @@
-import Banner from "./Banner";
-import Marquee from "./Marquee";
 import NavLinks from "./NavLinks";
 
 const Header = () => {
@@ -35,8 +33,6 @@ const Header = () => {
       </div>
 
       <NavLinks />
-      <Marquee />
-      <Banner />
     </header>
   );
 };
