@@ -1,3 +1,4 @@
+import Banner from "./Banner";
 import Marquee from "./Marquee";
 import NavLinks from "./NavLinks";
 
@@ -35,6 +36,7 @@ const Header = () => {
 
       <NavLinks />
       <Marquee />
+      <Banner />
     </header>
   );
 };
