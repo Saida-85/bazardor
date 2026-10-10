@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import MarqueeText from "react-marquee-text";
-import "react-marquee-text/dist/styles.css";
 
 const API_URL = "https://api.api-store.workers.dev/api/bazardor/products";
 
@@ -17,8 +15,6 @@ type Product = {
   image: string;
   today: number;
   yesterday: number;
-  lastWeek: number;
-  lastMonth: number;
   change: {
     dir: "up" | "down" | "flat" | string;
     pct: number;
@@ -39,37 +35,32 @@ export default function Marquee() {
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    let cancelled = false;
-
     fetch(API_URL)
       .then((res) => res.json())
       .then((data) => {
         const list: Product[] = Array.isArray(data)
           ? data
           : (data.products ?? data.data ?? []);
-
-        if (!cancelled) {
-          setProducts(list);
-        }
+        setProducts(list);
       })
       .catch((err) => console.error("Price ticker fetch failed:", err));
-
-    return () => {
-      cancelled = true;
-    };
   }, []);
 
-  if (products.length === 0) return null;
+  if (products.length === 0) {
+    return (
+      <div className="w-full bg-white border-y border-gray-200 py-3 px-4 text-center text-xs text-gray-400">
+        বাজারের লাইভ দর লোড হচ্ছে...
+      </div>
+    );
+  }
 
   return (
-    <div className="w-full overflow-hidden bg-white border-y border-gray-200 py-3">
-      <MarqueeText duration={10} direction="right" pauseOnHover>
-        {products.map((p) => {
+    <div className="w-full overflow-hidden bg-white border-y border-gray-200 py-3 relative flex items-center">
+      <div className="flex animate-marquee whitespace-nowrap gap-8 hover:[animation-play-state:paused]">
+        {[...products, ...products].map((p, idx) => {
           const isUp = p.change?.dir === "up";
           const isDown = p.change?.dir === "down";
-
           const arrow = isUp ? "▲" : isDown ? "▼" : "•";
-
           const color = isUp
             ? "text-red-600"
             : isDown
@@ -77,29 +68,26 @@ export default function Marquee() {
               : "text-gray-500";
 
           return (
-            <span
-              key={p.id}
-              className="mx-6 inline-flex items-center gap-1 whitespace-nowrap text-sm font-medium text-gray-800"
+            <div
+              key={`${p.id}-${idx}`}
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-800"
             >
               <span className="text-base">
                 {p.image || p.categoryIcon || "📦"}
               </span>
-
               <span>{p.nameBn}</span>
-
               <span className="text-gray-600 font-semibold">
                 {toBn(p.today)} টাকা/{getBanglaUnit(p.unit)}
               </span>
-
               <span
                 className={`inline-flex items-center gap-0.5 text-xs font-bold ${color}`}
               >
                 {arrow} {toBn(Math.abs(p.change?.pct ?? 0))}%
               </span>
-            </span>
+            </div>
           );
         })}
-      </MarqueeText>
+      </div>
     </div>
   );
 }
