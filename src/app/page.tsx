@@ -11,8 +11,10 @@ export default function Home() {
       {/* 2. Hero / Banner Section */}
       <Banner />
 
-      {/* 3. Product Trends Sections (Risers & Fallers) */}
-      <TrendingProducts />
+      {/* 3. Product Trends Sections (Risers & Fallers / All Products) */}
+      <section id="all-products">
+        <TrendingProducts />
+      </section>
     </main>
   );
 }

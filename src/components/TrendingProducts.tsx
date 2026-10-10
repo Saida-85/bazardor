@@ -72,16 +72,11 @@ export default function TrendingProducts() {
     } else if (value === "high-to-low") {
       currentList.sort((a, b) => b.today - a.today);
     } else {
-      // default order from API
       currentList = [...allProducts];
     }
 
     setSortedProducts(currentList);
   };
-
-  if (loading) {
-    return <div className="py-10 text-center text-gray-400">লোড হচ্ছে...</div>;
-  }
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 space-y-12">
@@ -92,11 +87,15 @@ export default function TrendingProducts() {
           <h2 className="text-xl font-bold text-gray-900">আজ দাম বেড়েছে</h2>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {risers.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        {loading ? (
+          <div className="py-6 text-center text-gray-400">লোড হচ্ছে...</div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {risers.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Section B — আজ দাম কমেছে */}
@@ -106,15 +105,21 @@ export default function TrendingProducts() {
           <h2 className="text-xl font-bold text-gray-900">আজ দাম কমেছে</h2>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {fallers.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        {loading ? (
+          <div className="py-6 text-center text-gray-400">লোড হচ্ছে...</div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {fallers.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Section C — সব পণ্য & Sort Filter */}
-      <div id="সব-পণ্য" className="pt-4 scroll-mt-24">
+      {/* Section A & B render above... */}
+
+      {/* Section C — সব পণ্য & Sort Filter (The 3rd Section) */}
+      <div id="section-all-products" className="pt-4 scroll-mt-28">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div>
             <h2 className="text-2xl font-bold text-gray-900">সব পণ্য</h2>
@@ -139,11 +144,17 @@ export default function TrendingProducts() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-          {sortedProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        {loading ? (
+          <div className="py-12 text-center text-gray-400">
+            সকল পণ্য লোড হচ্ছে...
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            {sortedProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

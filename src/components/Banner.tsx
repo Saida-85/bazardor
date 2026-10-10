@@ -1,9 +1,26 @@
+"use client";
+
 import Image from "next/image";
 
 const Banner = () => {
   const date = new Date().toLocaleDateString("bn-BD", {
     dateStyle: "full",
   });
+
+  const scrollToProducts = () => {
+    // Target the unique ID for Section C specifically
+    const section = document.getElementById("section-all-products");
+    if (section) {
+      const elementPosition = section.getBoundingClientRect().top;
+      // 160px offset accounts for your sticky header and nav bars
+      const offsetPosition = elementPosition + window.pageYOffset - 160;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
+    }
+  };
 
   return (
     <div className="bg-[#F0F5F0]">
@@ -30,7 +47,10 @@ const Banner = () => {
 
             {/* Action Button */}
             <div className="pt-2">
-              <button className="rounded-xl bg-[#047C37] text-white px-5 py-2.5 text-sm font-semibold shadow hover:bg-[#03632C] transition-colors">
+              <button
+                onClick={scrollToProducts}
+                className="inline-block rounded-xl bg-[#047C37] text-white px-6 py-3 text-sm font-semibold shadow hover:bg-[#03632C] transition-colors cursor-pointer"
+              >
                 সব পণ্য দেখুন
               </button>
             </div>
