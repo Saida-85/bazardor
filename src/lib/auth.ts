@@ -6,6 +6,15 @@ const client = new MongoClient(process.env.BETTER_AUTH_MONGODB_URI as string);
 const db = client.db("bazardor");
 
 export const auth = betterAuth({
+  // 1. Set the baseURL dynamically from process.env
+  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
+
+  // 2. Specify allowed origins to resolve the "Invalid origin" error
+  trustedOrigins: [
+    "http://localhost:3000",
+    "https://bazardor-blue.vercel.app",
+  ],
+
   emailAndPassword: { 
     enabled: true, 
   }, 
