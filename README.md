@@ -2,7 +2,7 @@
 
 **BazarDor (বাজার দর)** is a modern, full-stack e-commerce and marketplace application designed to deliver a seamless shopping experience for buyers and sellers. It features full authentication workflows, interactive product management, dynamic updates, and a responsive design tailored for performance across all devices.
 
-🔗 **Live Application:** https://bazardor-blue.vercel.app/sign-in
+🔗 **Live Application:** https://bazardor-blue.vercel.app
 
 ---
 
@@ -42,8 +42,6 @@
 To run this project on your local machine:
 
 1. **Clone the repository:**
-
-```bash
-   git clone [https://github.com/Saida-85/bazardor.git](https://github.com/Saida-85/bazardor.git)
+   ```bash
+   git clone https://github.com/Saida-85/bazardor.git
    cd bazardor
-```
