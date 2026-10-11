@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const API_URL = "https://api.api-store.workers.dev/api/bazardor/products";
+const API_URL = "https://openapi.programming-hero.com/api/bazardor/products";
 
 type Product = {
   id: number;
@@ -55,8 +55,8 @@ export default function Marquee() {
   }
 
   return (
-    <div className="w-full overflow-hidden bg-white border-y border-gray-200 py-3 relative flex items-center">
-      <div className="flex animate-marquee whitespace-nowrap gap-8 hover:[animation-play-state:paused]">
+    <div className="w-full overflow-hidden bg-white border-y border-gray-200 py-3 relative flex items-center group">
+      <div className="flex animate-marquee whitespace-nowrap gap-8 group-hover:[animation-play-state:paused]">
         {[...products, ...products].map((p, idx) => {
           const isUp = p.change?.dir === "up";
           const isDown = p.change?.dir === "down";

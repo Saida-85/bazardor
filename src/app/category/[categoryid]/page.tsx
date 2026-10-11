@@ -26,8 +26,18 @@ interface CategoryDetail {
   slug: string;
   nameBn: string;
   icon: string;
-  description?: string;
 }
+
+const categoryMapping: Record<string, { nameBn: string; icon: string }> = {
+  rice: { nameBn: "চাল", icon: "🍚" },
+  dal: { nameBn: "ডাল", icon: "🫘" },
+  oil: { nameBn: "তেল", icon: "🛢️" },
+  vegetables: { nameBn: "সবজি", icon: "🥬" },
+  fish: { nameBn: "মাছ", icon: "🐟" },
+  meat: { nameBn: "মাংস", icon: "🥩" },
+  dairy: { nameBn: "ডিম-দুধ", icon: "🥛" },
+  spices: { nameBn: "মসলা", icon: "🌶️" },
+};
 
 const toBn = (n: number) => n?.toLocaleString("bn-BD") || "০";
 
@@ -57,54 +67,34 @@ export default function CategoryPage({
     async function fetchCategoryData() {
       setLoading(true);
       try {
-        // 1. Fetch single category detail API
-        const catRes = await fetch(
-          `https://api.api-store.workers.dev/api/bazardor/categories/${categoryid}`,
+        const res = await fetch(
+          "https://openapi.programming-hero.com/api/bazardor/products",
         );
 
-        let fetchedProducts: Product[] = [];
-        let categoryInfo: CategoryDetail | null = null;
+        if (res.ok) {
+          const json = await res.json();
+          const allProducts: Product[] = Array.isArray(json)
+            ? json
+            : (json.products ?? json.data ?? []);
 
-        if (catRes.ok) {
-          const data = await resJson(catRes);
-          categoryInfo = data.category ?? data.data ?? data;
-
-          // Extract products array from category endpoint
-          if (Array.isArray(data.products)) {
-            fetchedProducts = data.products;
-          } else if (Array.isArray(data)) {
-            fetchedProducts = data;
-          } else if (
-            categoryInfo &&
-            Array.isArray((categoryInfo as any).products)
-          ) {
-            fetchedProducts = (categoryInfo as any).products;
-          }
-        }
-
-        // 2. Fallback: If products array is empty, fetch all products and filter by category slug/id
-        if (fetchedProducts.length === 0) {
-          const allProductsRes = await fetch(
-            "https://api.api-store.workers.dev/api/bazardor/products",
+          const filtered = allProducts.filter(
+            (p) =>
+              p.category?.toLowerCase() === categoryid?.toLowerCase() ||
+              p.categoryNameBn === categoryMapping[categoryid]?.nameBn,
           );
-          if (allProductsRes.ok) {
-            const allData = await resJson(allProductsRes);
-            const allList: Product[] = Array.isArray(allData)
-              ? allData
-              : (allData.products ?? allData.data ?? []);
 
-            fetchedProducts = allList.filter(
-              (p) =>
-                p.category?.toLowerCase() === categoryid?.toLowerCase() ||
-                p.categoryNameBn === categoryInfo?.nameBn,
-            );
-          }
+          setProducts(filtered);
         }
 
-        setCategoryData(categoryInfo);
-        setProducts(fetchedProducts);
+        const mapped = categoryMapping[categoryid];
+        setCategoryData({
+          id: categoryid,
+          slug: categoryid,
+          nameBn: mapped?.nameBn || categoryid,
+          icon: mapped?.icon || "📦",
+        });
       } catch (err) {
-        console.error("Failed to fetch category data:", err);
+        console.error("Failed to fetch category products:", err);
       } finally {
         setLoading(false);
       }
@@ -115,15 +105,26 @@ export default function CategoryPage({
     }
   }, [categoryid]);
 
-  async function resJson(res: Response) {
-    try {
-      return await res.json();
-    } catch {
-      return {};
-    }
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#F0F5F0] flex flex-col">
+        <Marquee />
+        <main className="mx-auto max-w-6xl px-4 py-8 space-y-6 flex-1 w-full">
+          <div className="h-28 bg-white border border-gray-200 rounded-3xl animate-pulse p-6" />
+          <div className="h-16 bg-white border border-gray-200 rounded-2xl animate-pulse" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="h-36 bg-white border border-gray-200 rounded-2xl animate-pulse"
+              />
+            ))}
+          </div>
+        </main>
+      </div>
+    );
   }
 
-  // Sorting Logic
   const sortedProducts = [...products].sort((a, b) => {
     if (sortOrder === "low-to-high") return a.today - b.today;
     if (sortOrder === "high-to-low") return b.today - a.today;
@@ -135,20 +136,7 @@ export default function CategoryPage({
       <Marquee />
 
       <main className="mx-auto max-w-6xl px-4 py-8 space-y-6 flex-1 w-full">
-        {loading ? (
-          <div className="space-y-6">
-            <div className="h-28 bg-white border border-gray-200 rounded-3xl animate-pulse p-6" />
-            <div className="h-16 bg-white border border-gray-200 rounded-2xl animate-pulse" />
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {[1, 2, 3].map((i) => (
-                <div
-                  key={i}
-                  className="h-36 bg-white border border-gray-200 rounded-2xl animate-pulse"
-                />
-              ))}
-            </div>
-          </div>
-        ) : !categoryData && sortedProducts.length === 0 ? (
+        {!categoryMapping[categoryid] && products.length === 0 ? (
           <div className="py-20 text-center space-y-4 bg-white border border-gray-200 rounded-3xl p-8 shadow-sm">
             <div className="text-5xl">🔍</div>
             <h2 className="text-2xl font-bold text-gray-800">
@@ -205,7 +193,6 @@ export default function CategoryPage({
                         | "high-to-low",
                     )
                   }
-                  aria-label="পণ্য সাজান"
                   className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm font-medium text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#047C37]"
                 >
                   <option value="default">ডিফল্ট</option>
@@ -216,79 +203,65 @@ export default function CategoryPage({
             </div>
 
             {/* Product Cards List */}
-            {sortedProducts.length === 0 ? (
-              <div className="py-16 text-center space-y-4 bg-white border border-gray-200 rounded-3xl p-8 shadow-sm">
-                <p className="text-gray-500 font-medium">
-                  এই ক্যাটাগরিতে বর্তমানে কোনো পণ্য পাওয়া যায়নি।
-                </p>
-                <Link
-                  href="/"
-                  className="inline-block text-[#047C37] font-semibold underline"
-                >
-                  হোম পেজে ফিরে যান
-                </Link>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {sortedProducts.map((p) => {
-                  const isUp = p.change?.dir === "up";
-                  const isDown = p.change?.dir === "down";
-                  const pct = Math.abs(p.change?.pct ?? 0);
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {sortedProducts.map((p) => {
+                const isUp = p.change?.dir === "up";
+                const isDown = p.change?.dir === "down";
+                const pct = Math.abs(p.change?.pct ?? 0);
 
-                  return (
-                    <Link
-                      key={p.id}
-                      href={`/product/${p.slug}`}
-                      className="group block rounded-2xl border border-gray-200 bg-white p-5 shadow-sm hover:border-[#047C37] hover:shadow-md transition-all"
-                    >
-                      <div className="flex items-start gap-4">
-                        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gray-50 text-3xl border border-gray-100 group-hover:scale-105 transition-transform">
-                          {p.image ||
-                            p.categoryIcon ||
-                            categoryData?.icon ||
-                            "📦"}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="font-bold text-gray-900 group-hover:text-[#047C37] transition-colors truncate">
-                            {p.nameBn}
-                          </h3>
-                          <p className="text-xs text-gray-500 mt-0.5">
-                            প্রতি {getBanglaUnit(p.unit)}
-                          </p>
-                        </div>
+                return (
+                  <Link
+                    key={p.id}
+                    href={`/product/${p.slug}`}
+                    className="group block rounded-2xl border border-gray-200 bg-white p-5 shadow-sm hover:border-[#047C37] hover:shadow-md transition-all"
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gray-50 text-3xl border border-gray-100 group-hover:scale-105 transition-transform">
+                        {p.image ||
+                          p.categoryIcon ||
+                          categoryData?.icon ||
+                          "📦"}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-bold text-gray-900 group-hover:text-[#047C37] transition-colors truncate">
+                          {p.nameBn}
+                        </h3>
+                        <p className="text-xs text-gray-500 mt-0.5">
+                          প্রতি {getBanglaUnit(p.unit)}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 flex items-end justify-between border-t border-gray-100 pt-3">
+                      <div>
+                        <span className="text-[10px] text-gray-400 block uppercase font-medium">
+                          আজকের দাম
+                        </span>
+                        <span className="text-xl font-extrabold text-gray-900">
+                          {toBn(p.today)}{" "}
+                          <span className="text-xs font-normal text-gray-600">
+                            টাকা
+                          </span>
+                        </span>
                       </div>
 
-                      <div className="mt-4 flex items-end justify-between border-t border-gray-100 pt-3">
-                        <div>
-                          <span className="text-[10px] text-gray-400 block uppercase font-medium">
-                            আজকের দাম
-                          </span>
-                          <span className="text-xl font-extrabold text-gray-900">
-                            {toBn(p.today)}{" "}
-                            <span className="text-xs font-normal text-gray-600">
-                              টাকা
-                            </span>
-                          </span>
-                        </div>
-
-                        <div
-                          className={`inline-flex items-center gap-0.5 px-2.5 py-1 rounded-full text-xs font-bold ${
-                            isUp
-                              ? "bg-red-50 text-red-600"
-                              : isDown
-                                ? "bg-green-50 text-green-600"
-                                : "bg-gray-100 text-gray-600"
-                          }`}
-                        >
-                          <span>{isUp ? "▲" : isDown ? "▼" : "•"}</span>
-                          <span>{toBn(pct)}%</span>
-                        </div>
+                      <div
+                        className={`inline-flex items-center gap-0.5 px-2.5 py-1 rounded-full text-xs font-bold ${
+                          isUp
+                            ? "bg-red-50 text-red-600"
+                            : isDown
+                              ? "bg-green-50 text-green-600"
+                              : "bg-gray-100 text-gray-600"
+                        }`}
+                      >
+                        <span>{isUp ? "▲" : isDown ? "▼" : "•"}</span>
+                        <span>{toBn(pct)}%</span>
                       </div>
-                    </Link>
-                  );
-                })}
-              </div>
-            )}
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
           </>
         )}
       </main>

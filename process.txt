@@ -1,0 +1,19 @@
+1. create nextjs project 
+2. npm install better-auth
+3. npm install mongodb
+4. npm install @better-auth/mongo-adapter
+5. mongodb configure in auth.ts
+6. create sign up page
+7. hero ui install 
+8. @import "@heroui/styles";   in global css
+9. design sign up page 
+10. /app/api/auth/[...all]/route.ts
+11. lib/auth-client.ts
+12. on submit signup   ==========  const res = await signUp.email({
+        name: data.name,
+        email: data.email,
+        password: data.password,
+        image: "https://example.com/image.png",
+      });
+
+13. 

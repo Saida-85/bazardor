@@ -61,7 +61,6 @@ const Banner = () => {
             <Image
               className="object-contain w-56 md:w-80 h-auto"
               priority
-              quality={100}
               width={960}
               height={960}
               sizes="(min-width: 768px) 320px, 224px"

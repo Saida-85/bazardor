@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @plugin "daisyui";
+@import "@heroui/styles"; 
 
 html {
   scroll-behavior: smooth;
@@ -18,4 +19,9 @@ html {
   display: flex;
   width: max-content;
   animation: marquee 35s linear infinite;
+}
+
+/* Pause the marquee animation when hovering over the marquee container */
+.animate-marquee:hover {
+  animation-play-state: paused;
 }
