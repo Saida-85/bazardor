@@ -42,8 +42,6 @@
 To run this project on your local machine:
 
 1. **Clone the repository:**
-
-```bash
-   git clone [https://github.com/Saida-85/bazardor.git](https://github.com/Saida-85/bazardor.git)
+   ```bash
+   git clone https://github.com/Saida-85/bazardor.git
    cd bazardor
-```
